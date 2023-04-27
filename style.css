@@ -1,0 +1,15 @@
+#contents {
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+    text-align: center;
+    align-items: center;
+}
+
+#main-canvas {
+    border: 2px solid;
+}
+
+#render-progress-bar {
+    max-width: 25%;
+}

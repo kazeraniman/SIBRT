@@ -30,7 +30,7 @@ renderButton.addEventListener("click", (event) => {
 const canvas = document.getElementById('main-canvas');
 canvas.width = IMAGE_WIDTH;
 canvas.height = IMAGE_HEIGHT;
-const progressBar = document.getElementById('render-progress-bar');
+const progressBar = document.getElementById('render-progress-bar-contents');
 const ctx = canvas.getContext('2d')
 
 function writeColourToPixel(ctx, colour, x, y) {

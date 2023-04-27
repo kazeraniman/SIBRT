@@ -10,11 +10,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 </head>
 <body>
-<canvas id="main-canvas"></canvas>
-<div class="progress">
-    <div class="determinate" id="render-progress-bar-contents"></div>
+<div id="contents">
+    <canvas id="main-canvas"></canvas>
+    <div class="progress" id="render-progress-bar">
+        <div class="determinate" id="render-progress-bar-contents"></div>
+    </div>
+    <a class="waves-effect waves-light btn" id="render-button">Render</a>
 </div>
-<a class="waves-effect waves-light btn" id="render-button">Render</a>
 
 <script src="src/vec3.js"></script>
 <script src="src/ray.js"></script>
