@@ -45,7 +45,7 @@ function rayColour(ray) {
 }
 
 function raytrace() {
-    for (let h = IMAGE_HEIGHT - 1; h >= 0; h--) {
+    for (let h = IMAGE_HEIGHT; h >= 0; h--) {
         for (let w = 0; w < IMAGE_WIDTH; w++) {
             let u = w / (IMAGE_WIDTH - 1);
             let v = h / (IMAGE_HEIGHT - 1);
