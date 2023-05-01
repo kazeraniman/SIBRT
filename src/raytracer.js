@@ -22,6 +22,9 @@ const LOWER_LEFT_CORNER = Vec3.subtract(Vec3.subtract(Vec3.subtract(EYE_ORIGIN, 
 const BG_TOP_GRADIENT_COLOUR = new Colour(1, 1, 1);
 const BG_BOT_GRADIENT_COLOUR = new Colour(0.5, 0.7, 1.0);
 
+// Testing
+const testSphere = new Sphere(new Point3(0, 0, -1), 0.5);
+
 // Hook up the main button
 const renderButton = document.getElementById("render-button");
 renderButton.addEventListener("click", (event) => {
@@ -41,29 +44,14 @@ function writeColourToPixel(ctx, colour, x, y) {
 }
 
 function rayColour(ray) {
-    let t = hitSphere(new Point3(0, 0, -1), 0.5, ray);
-    if (t > 0) {
-        const n = Vec3.unitVector(Vec3.subtract(ray.at(t), new Vec3(0, 0, -1)));
-        return Colour.multiply(new Colour(n.x() + 1, n.y() + 1, n.z() + 1), 0.5);
+    const hitRecord = new HitRecord();
+    if (testSphere.hit(ray, 0, 100, hitRecord)) {
+        return Colour.multiply(new Colour(hitRecord.normal.x() + 1, hitRecord.normal.y() + 1, hitRecord.normal.z() + 1), 0.5);
     }
 
     const unitDirection = Vec3.unitVector(ray.getDirection());
-    t = 0.5 * (unitDirection.y() + 1);
+    const t = 0.5 * (unitDirection.y() + 1);
     return Vec3.add(Vec3.multiply(BG_TOP_GRADIENT_COLOUR, (1 - t)), Vec3.multiply(BG_BOT_GRADIENT_COLOUR, t));
-}
-
-function hitSphere(centre, radius, ray) {
-    const oc = Vec3.subtract(ray.getOrigin(), centre);
-    const a = ray.getDirection().lengthSquared();
-    const halfB = Vec3.dotProduct(oc, ray.getDirection());
-    const c = oc.lengthSquared() - radius * radius;
-    const discriminant = halfB * halfB - a * c;
-
-    if (discriminant < 0) {
-        return -1;
-    } else {
-        return (-halfB - Math.sqrt(discriminant)) / a;
-    }
 }
 
 function raytrace() {
