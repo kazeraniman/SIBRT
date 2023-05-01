@@ -1,22 +1,8 @@
-// Colour
-const COLOUR_SCALING_FACTOR = 255.999;
-
 // Image
 const ASPECT_RATIO = 16/9;
 const IMAGE_WIDTH = 400;
 const IMAGE_HEIGHT = IMAGE_WIDTH / ASPECT_RATIO;
-
-// Camera
-const VIEWPORT_HEIGHT = 2;
-const VIEWPORT_WIDTH = ASPECT_RATIO * VIEWPORT_HEIGHT;
-const FOCAL_LENGTH = 1;
-const FOCAL_LENGTH_VEC = new Vec3(0, 0, FOCAL_LENGTH);
-const EYE_ORIGIN = new Point3();
-const HORIZONTAL = new Vec3(VIEWPORT_WIDTH, 0, 0);
-const VERTICAL = new Vec3(0, VIEWPORT_HEIGHT, 0);
-const HALF_HORIZONTAL = Vec3.divide(HORIZONTAL, 2);
-const HALF_VERTICAL = Vec3.divide(VERTICAL, 2);
-const LOWER_LEFT_CORNER = Vec3.subtract(Vec3.subtract(Vec3.subtract(EYE_ORIGIN, HALF_HORIZONTAL), HALF_VERTICAL), FOCAL_LENGTH_VEC);
+const SAMPLES_PER_PIXEL = 100;
 
 // Background
 const BG_TOP_GRADIENT_COLOUR = new Colour(1, 1, 1);
@@ -38,11 +24,6 @@ canvas.height = IMAGE_HEIGHT;
 const progressBar = document.getElementById('render-progress-bar-contents');
 const ctx = canvas.getContext('2d')
 
-function writeColourToPixel(ctx, colour, x, y) {
-    ctx.fillStyle = `rgb(${colour.x() * COLOUR_SCALING_FACTOR}, ${colour.y() * COLOUR_SCALING_FACTOR}, ${colour.z() * COLOUR_SCALING_FACTOR})`;
-    ctx.fillRect(x, y, 1, 1);
-}
-
 function rayColour(ray, world) {
     const hitRecord = new HitRecord();
     if (world.hit(ray, 0, Infinity, hitRecord)) {
@@ -55,19 +36,23 @@ function rayColour(ray, world) {
 }
 
 function raytrace() {
+    const camera = new Camera();
+
     const world = new HittableList();
     world.add(new Sphere(new Point3(0, 0, -1), 0.5));
     world.add(new Sphere(new Point3(0, -100.5, -1), 100));
 
     for (let h = IMAGE_HEIGHT; h >= 0; h--) {
         for (let w = 0; w < IMAGE_WIDTH; w++) {
-            const u = w / (IMAGE_WIDTH - 1);
-            const v = h / (IMAGE_HEIGHT - 1);
-            const horizontalComponent = Vec3.multiply(HORIZONTAL, u);
-            const verticalComponent = Vec3.multiply(VERTICAL, v);
-            const ray = new Ray(EYE_ORIGIN, Vec3.subtract(Vec3.add(Vec3.add(LOWER_LEFT_CORNER, horizontalComponent), verticalComponent), EYE_ORIGIN));
-            const pixelColour = rayColour(ray, world);
-            writeColourToPixel(ctx, pixelColour, w, (IMAGE_HEIGHT - h))
+            const pixelColour = new Colour();
+            for (let s = 0; s < SAMPLES_PER_PIXEL; s++) {
+                const u = (w + Utility.randomDouble()) / (IMAGE_WIDTH - 1);
+                const v = (h + Utility.randomDouble()) / (IMAGE_HEIGHT - 1);
+                const ray = camera.getRay(u, v);
+                pixelColour.addWith(rayColour(ray, world))
+            }
+
+            pixelColour.writeColourToPixel(ctx, w, (IMAGE_HEIGHT - h), SAMPLES_PER_PIXEL)
         }
 
         progressBar.style.width = ((IMAGE_HEIGHT - h) / IMAGE_HEIGHT) * 100 + "%";

@@ -90,4 +90,3 @@ class Vec3 {
 }
 
 const Point3 = Vec3;
-const Colour = Vec3;
