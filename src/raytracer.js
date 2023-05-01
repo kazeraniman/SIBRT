@@ -23,7 +23,7 @@ const BG_TOP_GRADIENT_COLOUR = new Colour(1, 1, 1);
 const BG_BOT_GRADIENT_COLOUR = new Colour(0.5, 0.7, 1.0);
 
 // Testing
-const testSphere = new Sphere(new Point3(0, 0, -1), 0.5);
+const hittables = new HittableList(new Sphere(new Point3(0, 0, -1), 0.5));
 
 // Hook up the main button
 const renderButton = document.getElementById("render-button");
@@ -45,7 +45,7 @@ function writeColourToPixel(ctx, colour, x, y) {
 
 function rayColour(ray) {
     const hitRecord = new HitRecord();
-    if (testSphere.hit(ray, 0, 100, hitRecord)) {
+    if (hittables.hit(ray, 0, 100, hitRecord)) {
         return Colour.multiply(new Colour(hitRecord.normal.x() + 1, hitRecord.normal.y() + 1, hitRecord.normal.z() + 1), 0.5);
     }
 
