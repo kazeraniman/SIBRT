@@ -22,8 +22,8 @@ const LOWER_LEFT_CORNER = Vec3.subtract(Vec3.subtract(Vec3.subtract(EYE_ORIGIN, 
 const BG_TOP_GRADIENT_COLOUR = new Colour(1, 1, 1);
 const BG_BOT_GRADIENT_COLOUR = new Colour(0.5, 0.7, 1.0);
 
-// Testing
-const hittables = new HittableList(new Sphere(new Point3(0, 0, -1), 0.5));
+// Colour
+const WHITE = new Colour(1, 1, 1);
 
 // Hook up the main button
 const renderButton = document.getElementById("render-button");
@@ -43,10 +43,10 @@ function writeColourToPixel(ctx, colour, x, y) {
     ctx.fillRect(x, y, 1, 1);
 }
 
-function rayColour(ray) {
+function rayColour(ray, world) {
     const hitRecord = new HitRecord();
-    if (hittables.hit(ray, 0, 100, hitRecord)) {
-        return Colour.multiply(new Colour(hitRecord.normal.x() + 1, hitRecord.normal.y() + 1, hitRecord.normal.z() + 1), 0.5);
+    if (world.hit(ray, 0, Infinity, hitRecord)) {
+        return Colour.multiply(Vec3.add(hitRecord.normal, WHITE), 0.5);
     }
 
     const unitDirection = Vec3.unitVector(ray.getDirection());
@@ -55,6 +55,10 @@ function rayColour(ray) {
 }
 
 function raytrace() {
+    const world = new HittableList();
+    world.add(new Sphere(new Point3(0, 0, -1), 0.5));
+    world.add(new Sphere(new Point3(0, -100.5, -1), 100));
+
     for (let h = IMAGE_HEIGHT; h >= 0; h--) {
         for (let w = 0; w < IMAGE_WIDTH; w++) {
             const u = w / (IMAGE_WIDTH - 1);
@@ -62,7 +66,7 @@ function raytrace() {
             const horizontalComponent = Vec3.multiply(HORIZONTAL, u);
             const verticalComponent = Vec3.multiply(VERTICAL, v);
             const ray = new Ray(EYE_ORIGIN, Vec3.subtract(Vec3.add(Vec3.add(LOWER_LEFT_CORNER, horizontalComponent), verticalComponent), EYE_ORIGIN));
-            const pixelColour = rayColour(ray);
+            const pixelColour = rayColour(ray, world);
             writeColourToPixel(ctx, pixelColour, w, (IMAGE_HEIGHT - h))
         }
 
