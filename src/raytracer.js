@@ -14,7 +14,9 @@ const FOCAL_LENGTH_VEC = new Vec3(0, 0, FOCAL_LENGTH);
 const EYE_ORIGIN = new Point3();
 const HORIZONTAL = new Vec3(VIEWPORT_WIDTH, 0, 0);
 const VERTICAL = new Vec3(0, VIEWPORT_HEIGHT, 0);
-const LOWER_LEFT_CORNER = Vec3.subtract(Vec3.subtract(EYE_ORIGIN, Vec3.divide(HORIZONTAL, 2)), Vec3.subtract(Vec3.divide(VERTICAL, 2), FOCAL_LENGTH_VEC));
+const HALF_HORIZONTAL = Vec3.divide(HORIZONTAL, 2);
+const HALF_VERTICAL = Vec3.divide(VERTICAL, 2);
+const LOWER_LEFT_CORNER = Vec3.subtract(Vec3.subtract(Vec3.subtract(EYE_ORIGIN, HALF_HORIZONTAL), HALF_VERTICAL), FOCAL_LENGTH_VEC);
 
 // Background
 const BG_TOP_GRADIENT_COLOUR = new Colour(1, 1, 1);
@@ -43,27 +45,29 @@ function rayColour(ray) {
         return new Colour(1, 0, 0);
     }
 
-    let unitDirection = Vec3.unitVector(ray.getDirection());
-    let t = 0.5 * (unitDirection.y() + 1);
+    const unitDirection = Vec3.unitVector(ray.getDirection());
+    const t = 0.5 * (unitDirection.y() + 1);
     return Vec3.add(Vec3.multiply(BG_TOP_GRADIENT_COLOUR, (1 - t)), Vec3.multiply(BG_BOT_GRADIENT_COLOUR, t));
 }
 
 function hitSphere(centre, radius, ray) {
-    let oc = Vec3.subtract(ray.getOrigin(), centre);
-    let a = Vec3.dotProduct(ray.getDirection(), ray.getDirection());
-    let b = 2 * Vec3.dotProduct(oc, ray.getDirection());
-    let c = Vec3.dotProduct(oc, oc) - radius * radius;
-    let discriminant = b * b - 4 * a * c;
+    const oc = Vec3.subtract(ray.getOrigin(), centre);
+    const a = Vec3.dotProduct(ray.getDirection(), ray.getDirection());
+    const b = 2 * Vec3.dotProduct(oc, ray.getDirection());
+    const c = Vec3.dotProduct(oc, oc) - radius * radius;
+    const discriminant = b * b - 4 * a * c;
     return discriminant > 0;
 }
 
 function raytrace() {
     for (let h = IMAGE_HEIGHT; h >= 0; h--) {
         for (let w = 0; w < IMAGE_WIDTH; w++) {
-            let u = w / (IMAGE_WIDTH - 1);
-            let v = h / (IMAGE_HEIGHT - 1);
-            let ray = new Ray(EYE_ORIGIN, Vec3.subtract(Vec3.add(Vec3.add(LOWER_LEFT_CORNER, Vec3.multiply(HORIZONTAL, u)), Vec3.multiply(VERTICAL, v)), EYE_ORIGIN));
-            let pixelColour = rayColour(ray);
+            const u = w / (IMAGE_WIDTH - 1);
+            const v = h / (IMAGE_HEIGHT - 1);
+            const horizontalComponent = Vec3.multiply(HORIZONTAL, u);
+            const verticalComponent = Vec3.multiply(VERTICAL, v);
+            const ray = new Ray(EYE_ORIGIN, Vec3.subtract(Vec3.add(Vec3.add(LOWER_LEFT_CORNER, horizontalComponent), verticalComponent), EYE_ORIGIN));
+            const pixelColour = rayColour(ray);
             writeColourToPixel(ctx, pixelColour, w, (IMAGE_HEIGHT - h))
         }
 
