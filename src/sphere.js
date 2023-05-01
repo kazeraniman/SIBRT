@@ -28,7 +28,8 @@ class Sphere extends Hittable {
 
         hitRecord.t = root;
         hitRecord.p = ray.at(hitRecord.t);
-        hitRecord.normal = Vec3.divide(Vec3.subtract(hitRecord.p, this.centre), this.radius);
+        const outwardNormal = Vec3.divide(Vec3.subtract(hitRecord.p, this.centre), this.radius);
+        hitRecord.setFaceNormal(ray, outwardNormal);
         return true;
     }
 }

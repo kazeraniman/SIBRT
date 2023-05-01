@@ -17,7 +17,7 @@ class Vec3 {
         return this.#vec[2];
     }
 
-    negate() {
+    getNegation() {
         return new Vec3(-this.x, -this.y, -this.z);
     }
 
