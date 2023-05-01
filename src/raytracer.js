@@ -41,12 +41,14 @@ function writeColourToPixel(ctx, colour, x, y) {
 }
 
 function rayColour(ray) {
-    if (hitSphere(new Point3(0, 0, -1), 0.5, ray)) {
-        return new Colour(1, 0, 0);
+    let t = hitSphere(new Point3(0, 0, -1), 0.5, ray);
+    if (t > 0) {
+        const n = Vec3.unitVector(Vec3.subtract(ray.at(t), new Vec3(0, 0, -1)));
+        return Colour.multiply(new Colour(n.x() + 1, n.y() + 1, n.z() + 1), 0.5);
     }
 
     const unitDirection = Vec3.unitVector(ray.getDirection());
-    const t = 0.5 * (unitDirection.y() + 1);
+    t = 0.5 * (unitDirection.y() + 1);
     return Vec3.add(Vec3.multiply(BG_TOP_GRADIENT_COLOUR, (1 - t)), Vec3.multiply(BG_BOT_GRADIENT_COLOUR, t));
 }
 
@@ -56,7 +58,12 @@ function hitSphere(centre, radius, ray) {
     const b = 2 * Vec3.dotProduct(oc, ray.getDirection());
     const c = Vec3.dotProduct(oc, oc) - radius * radius;
     const discriminant = b * b - 4 * a * c;
-    return discriminant > 0;
+
+    if (discriminant < 0) {
+        return -1;
+    } else {
+        return (-b - Math.sqrt(discriminant)) / (2 * a);
+    }
 }
 
 function raytrace() {
