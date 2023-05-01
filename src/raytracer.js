@@ -54,15 +54,15 @@ function rayColour(ray) {
 
 function hitSphere(centre, radius, ray) {
     const oc = Vec3.subtract(ray.getOrigin(), centre);
-    const a = Vec3.dotProduct(ray.getDirection(), ray.getDirection());
-    const b = 2 * Vec3.dotProduct(oc, ray.getDirection());
-    const c = Vec3.dotProduct(oc, oc) - radius * radius;
-    const discriminant = b * b - 4 * a * c;
+    const a = ray.getDirection().lengthSquared();
+    const halfB = Vec3.dotProduct(oc, ray.getDirection());
+    const c = oc.lengthSquared() - radius * radius;
+    const discriminant = halfB * halfB - a * c;
 
     if (discriminant < 0) {
         return -1;
     } else {
-        return (-b - Math.sqrt(discriminant)) / (2 * a);
+        return (-halfB - Math.sqrt(discriminant)) / a;
     }
 }
 
