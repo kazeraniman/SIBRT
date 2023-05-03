@@ -35,12 +35,17 @@ onmessage = event => {
             }
 
             postMessage({
+                type: "pixel",
                 pixelColour: pixelColour,
                 w: w,
                 h: h
             });
         }
     }
+
+    postMessage({
+        type: "complete"
+    });
 };
 
 function rayColour(ray, world) {

@@ -21,13 +21,14 @@ const ctx = canvas.getContext('2d')
 // Set up the raytracer
 let progress = 0;
 const worker = new Worker('src/worker.js');
-worker.onmessage = drawPixel;
+worker.onmessage = handleWorker;
 const camera = new Camera();
 const world = new HittableList();
 HittableList.add(world, new Sphere(new Point3(0, 0, -1), 0.5));
 HittableList.add(world, new Sphere(new Point3(0, -100.5, -1), 100));
 
 function raytrace() {
+    renderButton.disabled = true;
     progress = 0;
     progressBar.style.width = "0%";
     ctx.fillStyle = `rgb(256, 256, 256)`;
@@ -42,7 +43,14 @@ function raytrace() {
     });
 }
 
-function drawPixel(event) {
-    Colour.writeColourToPixel(event.data.pixelColour, ctx, event.data.w, (IMAGE_HEIGHT - event.data.h), SAMPLES_PER_PIXEL)
-    progressBar.style.width = Math.ceil((++progress / NUM_PIXELS) * 100) + "%";
+function handleWorker(event) {
+    switch (event.data.type) {
+        case "pixel":
+            Colour.writeColourToPixel(event.data.pixelColour, ctx, event.data.w, (IMAGE_HEIGHT - event.data.h), SAMPLES_PER_PIXEL)
+            progressBar.style.width = Math.ceil((++progress / NUM_PIXELS) * 100) + "%";
+            break;
+        case "complete":
+            renderButton.disabled = false;
+            break;
+    }
 }
