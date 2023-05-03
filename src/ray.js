@@ -1,21 +1,13 @@
 class Ray {
-    #origin;
-    #direction;
+    origin;
+    direction;
 
     constructor(origin = new Point3(), direction = new Vec3()) {
-        this.#origin = origin;
-        this.#direction = direction;
+        this.origin = origin;
+        this.direction = direction;
     }
 
-    getOrigin() {
-        return this.#origin;
-    }
-
-    getDirection() {
-        return this.#direction;
-    }
-
-    at(t) {
-        return Vec3.add(this.getOrigin(), Vec3.multiply(this.getDirection(), t));
+    static at(ray, t) {
+        return Vec3.add(ray.origin, Vec3.multiply(ray.direction, t));
     }
 }

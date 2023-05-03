@@ -2,15 +2,16 @@ class Sphere extends Hittable {
     constructor(centre = new Point3(), radius = 0) {
         super();
 
+        this.type = Hittable.SPHERE_TYPE;
         this.centre = centre;
         this.radius = radius;
     }
 
-    hit(ray, tMin, tMax, hitRecord) {
-        const oc = Vec3.subtract(ray.getOrigin(), this.centre);
-        const a = ray.getDirection().lengthSquared();
-        const halfB = Vec3.dotProduct(oc, ray.getDirection());
-        const c = oc.lengthSquared() - this.radius * this.radius;
+    static hit(sphere, ray, tMin, tMax, hitRecord) {
+        const oc = Vec3.subtract(ray.origin, sphere.centre);
+        const a = Vec3.lengthSquared(ray.direction);
+        const halfB = Vec3.dotProduct(oc, ray.direction);
+        const c = Vec3.lengthSquared(oc) - sphere.radius * sphere.radius;
 
         const discriminant = halfB * halfB - a * c;
         if (discriminant < 0) {
@@ -27,9 +28,9 @@ class Sphere extends Hittable {
         }
 
         hitRecord.t = root;
-        hitRecord.p = ray.at(hitRecord.t);
-        const outwardNormal = Vec3.divide(Vec3.subtract(hitRecord.p, this.centre), this.radius);
-        hitRecord.setFaceNormal(ray, outwardNormal);
+        hitRecord.p = Ray.at(ray, hitRecord.t);
+        const outwardNormal = Vec3.divide(Vec3.subtract(hitRecord.p, sphere.centre), sphere.radius);
+        HitRecord.setFaceNormal(hitRecord, ray, outwardNormal);
         return true;
     }
 }
