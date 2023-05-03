@@ -58,7 +58,7 @@ function rayColour(ray, world, depth) {
     }
 
     const hitRecord = new HitRecord();
-    if (Hittable.hit(world, ray, 0, Infinity, hitRecord)) {
+    if (Hittable.hit(world, ray, 0.001, Infinity, hitRecord)) {
         const bounceDirectionEndPoint = Vec3.add(Vec3.add(hitRecord.p, hitRecord.normal), Vec3.randomInUnitSphere());
         return Colour.multiply(rayColour(new Ray(hitRecord.p, Vec3.subtract(bounceDirectionEndPoint, hitRecord.p)), world, depth - 1), 0.5);
     }

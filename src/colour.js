@@ -11,9 +11,9 @@ class Colour extends Vec3 {
 
     static writeColourToPixel(colour, ctx, x, y, samplesPerPixel) {
         const scale = 1 / samplesPerPixel;
-        let r = Colour.COLOUR_VALUES * Utility.clamp(colour.x * scale, Colour.COLOUR_MIN, Colour.COLOUR_MAX);
-        let g = Colour.COLOUR_VALUES * Utility.clamp(colour.y * scale, Colour.COLOUR_MIN, Colour.COLOUR_MAX);
-        let b = Colour.COLOUR_VALUES * Utility.clamp(colour.z * scale, Colour.COLOUR_MIN, Colour.COLOUR_MAX);
+        let r = Colour.COLOUR_VALUES * Utility.clamp(Math.sqrt(colour.x * scale), Colour.COLOUR_MIN, Colour.COLOUR_MAX);
+        let g = Colour.COLOUR_VALUES * Utility.clamp(Math.sqrt(colour.y * scale), Colour.COLOUR_MIN, Colour.COLOUR_MAX);
+        let b = Colour.COLOUR_VALUES * Utility.clamp(Math.sqrt(colour.z * scale), Colour.COLOUR_MIN, Colour.COLOUR_MAX);
 
         ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
         ctx.fillRect(x, y, Colour.PIXEL_WIDTH, Colour.PIXEL_HEIGHT);
