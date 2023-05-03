@@ -6,7 +6,7 @@ class HitRecord {
 
     static setFaceNormal(hitRecord, ray, outwardNormal) {
         hitRecord.frontFace = Vec3.dotProduct(ray.direction, outwardNormal) < 0;
-        hitRecord.normal = hitRecord.frontFace ? outwardNormal : outwardNormal.getNegation();
+        hitRecord.normal = hitRecord.frontFace ? outwardNormal : Vec3.negate(outwardNormal);
     }
 
     static clone(targetHitRecord, sourceHitRecord) {

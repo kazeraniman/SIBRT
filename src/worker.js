@@ -16,6 +16,10 @@ const BG_BOT_GRADIENT_COLOUR = new Colour(0.5, 0.7, 1.0);
 
 // Colour
 const WHITE = new Colour(1, 1, 1);
+const BLACK = new Colour(0, 0, 0);
+
+// Render
+const MAX_RAY_BOUNCES = 50;
 
 onmessage = event => {
     const imageWidth = event.data.imageWidth;
@@ -31,7 +35,7 @@ onmessage = event => {
                 const u = (w + Utility.randomDouble()) / (imageWidth - 1);
                 const v = (h + Utility.randomDouble()) / (imageHeight - 1);
                 const ray = Camera.getRay(camera, u, v);
-                pixelColour = Vec3.add(pixelColour, rayColour(ray, world))
+                pixelColour = Vec3.add(pixelColour, rayColour(ray, world, MAX_RAY_BOUNCES))
             }
 
             postMessage({
@@ -48,10 +52,15 @@ onmessage = event => {
     });
 };
 
-function rayColour(ray, world) {
+function rayColour(ray, world, depth) {
+    if (depth <= 0) {
+        return BLACK;
+    }
+
     const hitRecord = new HitRecord();
     if (Hittable.hit(world, ray, 0, Infinity, hitRecord)) {
-        return Colour.multiply(Vec3.add(hitRecord.normal, WHITE), 0.5);
+        const bounceDirectionEndPoint = Vec3.add(Vec3.add(hitRecord.p, hitRecord.normal), Vec3.randomInUnitSphere());
+        return Colour.multiply(rayColour(new Ray(hitRecord.p, Vec3.subtract(bounceDirectionEndPoint, hitRecord.p)), world, depth - 1), 0.5);
     }
 
     const unitDirection = Vec3.unitVector(ray.direction);

@@ -15,7 +15,10 @@ renderButton.addEventListener("click", () => {
 const canvas = document.getElementById('main-canvas');
 canvas.width = IMAGE_WIDTH;
 canvas.height = IMAGE_HEIGHT;
-const progressBar = document.getElementById('render-progress-bar-contents');
+const progressBar = new mdc.linearProgress.MDCLinearProgress(document.getElementById('render-progress-bar'));
+progressBar.determinate = true;
+progressBar.buffer = 1;
+progressBar.progress = 0;
 const ctx = canvas.getContext('2d')
 
 // Set up the raytracer
@@ -30,7 +33,7 @@ HittableList.add(world, new Sphere(new Point3(0, -100.5, -1), 100));
 function raytrace() {
     renderButton.disabled = true;
     progress = 0;
-    progressBar.style.width = "0%";
+    progressBar.progress = 0;
     ctx.fillStyle = `rgb(256, 256, 256)`;
     ctx.fillRect(0, 0, IMAGE_WIDTH, IMAGE_HEIGHT);
 
@@ -46,10 +49,11 @@ function raytrace() {
 function handleWorker(event) {
     switch (event.data.type) {
         case "pixel":
-            Colour.writeColourToPixel(event.data.pixelColour, ctx, event.data.w, (IMAGE_HEIGHT - event.data.h), SAMPLES_PER_PIXEL)
-            progressBar.style.width = Math.ceil((++progress / NUM_PIXELS) * 100) + "%";
+            Colour.writeColourToPixel(event.data.pixelColour, ctx, event.data.w, (IMAGE_HEIGHT - event.data.h), SAMPLES_PER_PIXEL);
+            progressBar.progress = ++progress / NUM_PIXELS;
             break;
         case "complete":
+            progressBar.progress = 1;
             renderButton.disabled = false;
             break;
     }

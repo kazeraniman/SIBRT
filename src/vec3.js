@@ -60,6 +60,21 @@ class Vec3 {
     static unitVector(vec) {
         return this.divide(vec, Vec3.length(vec));
     }
+
+    static random(inclusiveMin = 0, exclusiveMax = 1) {
+        return new Vec3(Utility.randomDouble(inclusiveMin, exclusiveMax), Utility.randomDouble(inclusiveMin, exclusiveMax), Utility.randomDouble(inclusiveMin, exclusiveMax));
+    }
+
+    static randomInUnitSphere() {
+        while(true) {
+            const p = Vec3.random(-1, 1);
+            if (Vec3.lengthSquared(p) >= 1) {
+                continue;
+            }
+
+            return p;
+        }
+    }
 }
 
 const Point3 = Vec3;

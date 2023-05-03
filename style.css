@@ -13,4 +13,5 @@
 
 #render-progress-bar {
     max-width: 25%;
+    text-align: start;
 }
