@@ -4,6 +4,7 @@
     margin: auto;
     text-align: center;
     align-items: center;
+    gap: 10px;
 }
 
 #main-canvas {

@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <title>SIBRT</title>
     <link rel="stylesheet" type="text/css" href="style.css" />
-    <!-- Compiled and minified CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-    <!-- Compiled and minified JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <!-- Required styles for Material Web -->
+    <link rel="stylesheet" href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <!-- Required Material Web JavaScript library -->
+    <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
 </head>
 <body>
 <div id="contents">
@@ -15,7 +16,10 @@
     <div class="progress" id="render-progress-bar">
         <div class="determinate" id="render-progress-bar-contents"></div>
     </div>
-    <a class="waves-effect waves-light btn" id="render-button">Render</a>
+    <button class="mdc-button mdc-button--raised" id="render-button">
+        <span class="mdc-button__ripple"></span>
+        Render
+    </button>
 </div>
 
 <script src="src/utility.js"></script>

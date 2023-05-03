@@ -1,36 +1,37 @@
 class HittableList extends Hittable{
-    #hittables;
+    hittables;
 
     constructor(hittable = null) {
         super();
 
-        this.#hittables = [];
+        this.type = Hittable.LIST_TYPE;
+        this.hittables = [];
         if (hittable != null) {
-            this.add(hittable);
+            HittableList.add(this, hittable);
         }
     }
 
-    add(hittable) {
-        this.#hittables.push(hittable);
+    static add(hittableList, hittable) {
+        hittableList.hittables.push(hittable);
     }
 
-    clear() {
-        this.#hittables.clear();
+    static clear(hittableList) {
+        hittableList.hittables.clear();
     }
 
-    hit(ray, tMin, tMax, hitRecord) {
+    static hit(hittableList, ray, tMin, tMax, hitRecord) {
         const currentHitRecord = new HitRecord();
         let hitAnything = false;
         let closestSoFar = tMax;
 
-        this.#hittables.forEach(hittable => {
-            if (!hittable.hit(ray, tMin, closestSoFar, currentHitRecord)) {
+        hittableList.hittables.forEach(hittable => {
+            if (!Hittable.hit(hittable, ray, tMin, closestSoFar, currentHitRecord)) {
                 return;
             }
 
             hitAnything = true;
             closestSoFar = currentHitRecord.t;
-            hitRecord.clone(currentHitRecord);
+            HitRecord.clone(hitRecord, currentHitRecord);
         });
 
         return hitAnything;
