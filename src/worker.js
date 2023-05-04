@@ -26,10 +26,10 @@ onmessage = event => {
     const samplesPerPixel = event.data.samplesPerPixel;
     const camera = event.data.camera;
     const world = event.data.world;
-    const startH = event.data.startH;
-    const endH = event.data.endH;
+    const startOffset = event.data.startOffset;
+    const interval = event.data.interval;
 
-    for (let h = startH - 1; h >= endH && h >= 0; h--) {
+    for (let h = imageHeight - startOffset; h > 0; h -= interval) {
         for (let w = 0; w < imageWidth; w++) {
             let pixelColour = new Colour();
             for (let s = 0; s < samplesPerPixel; s++) {

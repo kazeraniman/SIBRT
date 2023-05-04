@@ -6,8 +6,7 @@ const SAMPLES_PER_PIXEL = 100;
 const NUM_PIXELS = IMAGE_WIDTH * IMAGE_HEIGHT;
 
 // Workers
-const NUM_WORKERS = 5;
-const ROWS_PER_WORKER = IMAGE_HEIGHT / NUM_WORKERS;
+const NUM_WORKERS = 1;
 let numWorkersInProgress = 0;
 const workers = [];
 for (let i = 0; i < NUM_WORKERS; i++) {
@@ -16,8 +15,6 @@ for (let i = 0; i < NUM_WORKERS; i++) {
     workers.push(worker);
 }
 
-// Render took: 15443.600000023842 milliseconds with 1 worker(s).
-// Render took: 17108 milliseconds with 2 worker(s).
 // Hook up the main button
 const renderButton = document.getElementById("render-button");
 renderButton.addEventListener("click", () => {
@@ -26,6 +23,7 @@ renderButton.addEventListener("click", () => {
 
 // Set up the canvas and related parts
 const canvas = document.getElementById('main-canvas');
+const renderTime = document.getElementById('render-time');
 canvas.width = IMAGE_WIDTH;
 canvas.height = IMAGE_HEIGHT;
 const progressBar = new mdc.linearProgress.MDCLinearProgress(document.getElementById('render-progress-bar'));
@@ -55,17 +53,14 @@ function raytrace() {
     ctx.fillRect(0, 0, IMAGE_WIDTH, IMAGE_HEIGHT);
 
     for (let worker = 0; worker < NUM_WORKERS; worker++) {
-        const startH = IMAGE_HEIGHT - worker * Math.ceil(ROWS_PER_WORKER);
-        const endH = startH - Math.ceil(ROWS_PER_WORKER);
-
         workers[worker].postMessage({
             imageWidth: IMAGE_WIDTH,
             imageHeight: IMAGE_HEIGHT,
             samplesPerPixel: SAMPLES_PER_PIXEL,
             camera: camera,
             world: world,
-            startH: startH,
-            endH: endH
+            startOffset: worker,
+            interval: NUM_WORKERS
         });
     }
 }
@@ -82,7 +77,7 @@ function handleWorker(event) {
                 progressBar.progress = 1;
                 renderButton.disabled = false;
                 endTime = performance.now();
-                console.log(`Render took: ${endTime - startTime} milliseconds with ${NUM_WORKERS} worker(s).`);
+                renderTime.innerText = `Render Time: ${(endTime - startTime).toFixed(2)} milliseconds with ${NUM_WORKERS} worker(s).`;
             }
 
             break;
