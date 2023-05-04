@@ -23,7 +23,7 @@ const ctx = canvas.getContext('2d')
 
 // Set up the raytracer
 let progress = 0;
-const worker = new Worker('src/worker.js');
+const worker = new Worker('src/parentRenderWorker.js');
 worker.onmessage = handleWorker;
 const camera = new Camera();
 const world = new HittableList();
@@ -48,11 +48,11 @@ function raytrace() {
 
 function handleWorker(event) {
     switch (event.data.type) {
-        case "pixel":
+        case 'pixel':
             Colour.writeColourToPixel(event.data.pixelColour, ctx, event.data.w, (IMAGE_HEIGHT - event.data.h), SAMPLES_PER_PIXEL);
             progressBar.progress = ++progress / NUM_PIXELS;
             break;
-        case "complete":
+        case 'complete':
             progressBar.progress = 1;
             renderButton.disabled = false;
             break;

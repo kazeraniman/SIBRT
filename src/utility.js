@@ -14,4 +14,17 @@ class Utility {
 
         return val > max ? max : val;
     }
+
+    static waitUntil(condition, pollInterval = 100) {
+        return new Promise(resolve => {
+            const interval = setInterval(() => {
+                if (!condition()) {
+                    return;
+                }
+
+                clearInterval(interval);
+                resolve();
+            }, pollInterval);
+        });
+    }
 }
