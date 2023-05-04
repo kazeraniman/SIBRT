@@ -15,7 +15,6 @@ const BG_TOP_GRADIENT_COLOUR = new Colour(1, 1, 1);
 const BG_BOT_GRADIENT_COLOUR = new Colour(0.5, 0.7, 1.0);
 
 // Colour
-const WHITE = new Colour(1, 1, 1);
 const BLACK = new Colour(0, 0, 0);
 
 // Render
@@ -27,8 +26,10 @@ onmessage = event => {
     const samplesPerPixel = event.data.samplesPerPixel;
     const camera = event.data.camera;
     const world = event.data.world;
+    const startH = event.data.startH;
+    const endH = event.data.endH;
 
-    for (let h = imageHeight; h >= 0; h--) {
+    for (let h = startH - 1; h >= endH && h >= 0; h--) {
         for (let w = 0; w < imageWidth; w++) {
             let pixelColour = new Colour();
             for (let s = 0; s < samplesPerPixel; s++) {
