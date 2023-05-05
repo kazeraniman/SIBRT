@@ -2,6 +2,10 @@ importScripts(
     'utility.js',
     'vec3.js',
     'colour.js',
+    'materialScatterRecord.js',
+    'material.js',
+    'lambertian.js',
+    'metal.js',
     'ray.js',
     'hittable.js',
     'hitRecord.js',
@@ -20,11 +24,6 @@ const BLACK = new Colour(0, 0, 0);
 // Render
 const MAX_RAY_BOUNCES = 50;
 
-const DIFFUSE_RENDERER_LAMBERTIAN = 'lambertian';
-const DIFFUSE_RENDERER_SPHERE = 'sphere';
-const DIFFUSE_RENDERER_HEMISPHERE = 'hemisphere';
-const SELECTED_DIFFUSE_RENDERER = DIFFUSE_RENDERER_LAMBERTIAN;
-
 onmessage = event => {
     const imageWidth = event.data.imageWidth;
     const imageHeight = event.data.imageHeight;
@@ -41,7 +40,8 @@ onmessage = event => {
                 const u = (w + Utility.randomDouble()) / (imageWidth - 1);
                 const v = (h + Utility.randomDouble()) / (imageHeight - 1);
                 const ray = Camera.getRay(camera, u, v);
-                pixelColour = Vec3.add(pixelColour, rayColour(ray, world, MAX_RAY_BOUNCES))
+                const newColour = rayColour(ray, world, MAX_RAY_BOUNCES);
+                pixelColour = Vec3.add(pixelColour, newColour)
             }
 
             postMessage({
@@ -65,19 +65,12 @@ function rayColour(ray, world, depth) {
 
     const hitRecord = new HitRecord();
     if (Hittable.hit(world, ray, 0.001, Infinity, hitRecord)) {
-        let bounceDirectionEndPoint = Vec3.add(hitRecord.p, Vec3.randomInHemisphere(hitRecord.normal));
-        switch (SELECTED_DIFFUSE_RENDERER) {
-            case DIFFUSE_RENDERER_SPHERE:
-                bounceDirectionEndPoint = Vec3.add(Vec3.add(hitRecord.p, hitRecord.normal), Vec3.randomInUnitSphere());
-                break;
-            case DIFFUSE_RENDERER_HEMISPHERE:
-                bounceDirectionEndPoint = Vec3.add(hitRecord.p, Vec3.randomInHemisphere(hitRecord.normal));
-                break;
-            case DIFFUSE_RENDERER_LAMBERTIAN:
-                bounceDirectionEndPoint = Vec3.add(Vec3.add(hitRecord.p, hitRecord.normal), Vec3.randomUnitVector());
-                break;
+        const materialScatterRecord = new MaterialScatterRecord();
+        if (Material.scatter(hitRecord.material, ray, hitRecord, materialScatterRecord)) {
+            return Vec3.multiply(materialScatterRecord.attenuation, rayColour(materialScatterRecord.rayScattered, world, depth - 1));
         }
-        return Colour.multiply(rayColour(new Ray(hitRecord.p, Vec3.subtract(bounceDirectionEndPoint, hitRecord.p)), world, depth - 1), 0.5);
+
+        return BLACK;
     }
 
     const unitDirection = Vec3.unitVector(ray.direction);

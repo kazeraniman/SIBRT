@@ -3,6 +3,7 @@ class HitRecord {
     normal;
     t;
     frontFace;
+    material;
 
     static setFaceNormal(hitRecord, ray, outwardNormal) {
         hitRecord.frontFace = Vec3.dotProduct(ray.direction, outwardNormal) < 0;
@@ -14,5 +15,6 @@ class HitRecord {
         targetHitRecord.normal = sourceHitRecord.normal;
         targetHitRecord.t = sourceHitRecord.t;
         targetHitRecord.frontFace = sourceHitRecord.frontFace;
+        targetHitRecord.material = sourceHitRecord.material;
     }
 }

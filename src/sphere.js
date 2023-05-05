@@ -1,10 +1,11 @@
 class Sphere extends Hittable {
-    constructor(centre = new Point3(), radius = 0) {
+    constructor(centre, radius, material) {
         super();
 
         this.type = Hittable.SPHERE_TYPE;
         this.centre = centre;
         this.radius = radius;
+        this.material = material;
     }
 
     static hit(sphere, ray, tMin, tMax, hitRecord) {
@@ -31,6 +32,7 @@ class Sphere extends Hittable {
         hitRecord.p = Ray.at(ray, hitRecord.t);
         const outwardNormal = Vec3.divide(Vec3.subtract(hitRecord.p, sphere.centre), sphere.radius);
         HitRecord.setFaceNormal(hitRecord, ray, outwardNormal);
+        hitRecord.material = sphere.material;
         return true;
     }
 }

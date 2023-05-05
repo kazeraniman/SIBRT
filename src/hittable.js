@@ -1,5 +1,6 @@
 class Hittable {
     type;
+    material;
 
     static LIST_TYPE = "list";
     static SPHERE_TYPE = "sphere";

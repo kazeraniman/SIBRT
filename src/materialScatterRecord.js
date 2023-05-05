@@ -1,0 +1,4 @@
+class MaterialScatterRecord {
+    attenuation;
+    rayScattered;
+}

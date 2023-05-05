@@ -3,6 +3,8 @@ class Vec3 {
     y;
     z;
 
+    static EPSILON = 1e-8;
+
     constructor(x = 0, y = 0, z = 0) {
         this.x = x;
         this.y = y;
@@ -34,7 +36,7 @@ class Vec3 {
     }
 
     static multiply(firstVec, multiplier) {
-        if (typeof multiplier instanceof Vec3) {
+        if (multiplier instanceof Vec3) {
             return new Vec3(firstVec.x * multiplier.x, firstVec.y * multiplier.y, firstVec.z * multiplier.z);
         }
 
@@ -87,6 +89,14 @@ class Vec3 {
         }
 
         return Vec3.negate(inUnitSphere);
+    }
+
+    static isNearZero(vec) {
+        return Math.abs(vec.x) < Vec3.EPSILON && Math.abs(vec.y) < Vec3.EPSILON && Math.abs(vec.z) < Vec3.EPSILON;
+    }
+
+    static reflect(vec, normal) {
+        return Vec3.subtract(vec, Vec3.multiply(normal, 2 * Vec3.dotProduct(vec, normal)));
     }
 }
 
