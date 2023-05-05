@@ -75,6 +75,19 @@ class Vec3 {
             return p;
         }
     }
+
+    static randomUnitVector() {
+        return Vec3.unitVector(this.randomInUnitSphere());
+    }
+
+    static randomInHemisphere(normal) {
+        let inUnitSphere = Vec3.randomInUnitSphere();
+        if (Vec3.dotProduct(inUnitSphere, normal) > 0) {
+            return inUnitSphere;
+        }
+
+        return Vec3.negate(inUnitSphere);
+    }
 }
 
 const Point3 = Vec3;
