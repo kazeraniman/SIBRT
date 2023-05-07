@@ -98,6 +98,13 @@ class Vec3 {
     static reflect(vec, normal) {
         return Vec3.subtract(vec, Vec3.multiply(normal, 2 * Vec3.dotProduct(vec, normal)));
     }
+
+    static refract(uv, normal, etaiOverEtat) {
+        const cosTheta = Math.min(Vec3.dotProduct(Vec3.negate(uv), normal), 1);
+        const rayOutPerp = Vec3.multiply(Vec3.add(Vec3.multiply(normal, cosTheta), uv), etaiOverEtat);
+        const rayOutParallel = Vec3.multiply(normal, -Math.sqrt(Math.abs(1 - Vec3.lengthSquared(rayOutPerp))));
+        return Vec3.add(rayOutPerp, rayOutParallel);
+    }
 }
 
 const Point3 = Vec3;

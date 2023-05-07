@@ -3,6 +3,10 @@ class Colour extends Vec3 {
     static COLOUR_MIN = 0;
     static COLOUR_MAX = 0.999;
 
+    // TODO: Ensure no one ever changes these values
+    static BLACK = new Colour(0, 0, 0);
+    static WHITE = new Colour(1, 1, 1);
+
     constructor(x = 0, y = 0, z = 0) {
         super(x, y , z);
     }

@@ -38,9 +38,10 @@ let progress = 0;
 const camera = new Camera();
 const world = new HittableList();
 HittableList.add(world, new Sphere(new Point3(0, -100.5, -1), 100, new Lambertian(new Colour(0.8, 0.8, 0))));
-HittableList.add(world, new Sphere(new Point3(0, 0, -1), 0.5, new Lambertian(new Colour(0.7, 0.3, 0.3))));
-HittableList.add(world, new Sphere(new Point3(-1, 0, -1), 0.5, new Metal(new Colour(0.8, 0.8, 0.8), 0.3)));
-HittableList.add(world, new Sphere(new Point3(1, 0, -1), 0.5, new Metal(new Colour(0.8, 0.6, 0.2), 1)));
+HittableList.add(world, new Sphere(new Point3(0, 0, -1), 0.5, new Lambertian(new Colour(0.1, 0.2, 0.5))));
+HittableList.add(world, new Sphere(new Point3(-1, 0, -1), 0.5, new Dielectric(1.5)));
+HittableList.add(world, new Sphere(new Point3(-1, 0, -1), -0.4, new Dielectric(1.5)));
+HittableList.add(world, new Sphere(new Point3(1, 0, -1), 0.5, new Metal(new Colour(0.8, 0.6, 0.2), 0)));
 
 // Performance metrics
 let startTime;

@@ -3,6 +3,7 @@ class Material {
 
     static LAMBERTIAN_TYPE = "lambertian";
     static METAL_TYPE = "metal";
+    static DIELECTRIC_TYPE = "dielectric";
 
     constructor() {
         if (new.target === Material) {
@@ -16,6 +17,8 @@ class Material {
                 return Lambertian.scatter(material, rayIn, hitRecord, materialScatterRecord);
             case this.METAL_TYPE:
                 return Metal.scatter(material, rayIn, hitRecord, materialScatterRecord);
+            case this.DIELECTRIC_TYPE:
+                return Dielectric.scatter(material, rayIn, hitRecord, materialScatterRecord);
         }
     }
 }

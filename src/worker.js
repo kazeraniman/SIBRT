@@ -6,6 +6,7 @@ importScripts(
     'material.js',
     'lambertian.js',
     'metal.js',
+    'dielectric.js',
     'ray.js',
     'hittable.js',
     'hitRecord.js',
@@ -17,9 +18,6 @@ importScripts(
 // Background
 const BG_TOP_GRADIENT_COLOUR = new Colour(1, 1, 1);
 const BG_BOT_GRADIENT_COLOUR = new Colour(0.5, 0.7, 1.0);
-
-// Colour
-const BLACK = new Colour(0, 0, 0);
 
 // Render
 const MAX_RAY_BOUNCES = 50;
@@ -60,7 +58,7 @@ onmessage = event => {
 
 function rayColour(ray, world, depth) {
     if (depth <= 0) {
-        return BLACK;
+        return Colour.BLACK;
     }
 
     const hitRecord = new HitRecord();
@@ -70,7 +68,7 @@ function rayColour(ray, world, depth) {
             return Vec3.multiply(materialScatterRecord.attenuation, rayColour(materialScatterRecord.rayScattered, world, depth - 1));
         }
 
-        return BLACK;
+        return Colour.BLACK;
     }
 
     const unitDirection = Vec3.unitVector(ray.direction);
