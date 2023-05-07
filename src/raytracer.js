@@ -6,7 +6,7 @@ const SAMPLES_PER_PIXEL = 100;
 const NUM_PIXELS = IMAGE_WIDTH * IMAGE_HEIGHT;
 
 // Workers
-const NUM_WORKERS = 1;
+const NUM_WORKERS = 4;
 let numWorkersInProgress = 0;
 const workers = [];
 for (let i = 0; i < NUM_WORKERS; i++) {
@@ -30,7 +30,8 @@ const progressBar = new mdc.linearProgress.MDCLinearProgress(document.getElement
 progressBar.determinate = true;
 progressBar.buffer = 1;
 progressBar.progress = 0;
-const ctx = canvas.getContext('2d')
+const ctx = canvas.getContext('2d', { willReadFrequently: true });
+let imageData = ctx.getImageData(0, 0, IMAGE_WIDTH, IMAGE_HEIGHT);
 
 // Set up the raytracer
 let progress = 0;
@@ -47,12 +48,7 @@ let endTime;
 
 function raytrace() {
     startTime = performance.now();
-    renderButton.disabled = true;
-    progress = 0;
-    progressBar.progress = 0;
-    numWorkersInProgress = NUM_WORKERS;
-    ctx.fillStyle = `rgb(256, 256, 256)`;
-    ctx.fillRect(0, 0, IMAGE_WIDTH, IMAGE_HEIGHT);
+    resetTrace();
 
     for (let worker = 0; worker < NUM_WORKERS; worker++) {
         workers[worker].postMessage({
@@ -70,7 +66,8 @@ function raytrace() {
 function handleWorker(event) {
     switch (event.data.type) {
         case "pixel":
-            Colour.writeColourToPixel(event.data.pixelColour, ctx, event.data.w, (IMAGE_HEIGHT - event.data.h), SAMPLES_PER_PIXEL);
+            Colour.writeColourToPixel(event.data.pixelColour, imageData, IMAGE_WIDTH, event.data.w, (IMAGE_HEIGHT - event.data.h), SAMPLES_PER_PIXEL);
+            ctx.putImageData(imageData, 0, 0);
             progressBar.progress = ++progress / NUM_PIXELS;
             break;
         case "complete":
@@ -84,4 +81,14 @@ function handleWorker(event) {
 
             break;
     }
+}
+
+function resetTrace() {
+    renderButton.disabled = true;
+    progress = 0;
+    progressBar.progress = 0;
+    numWorkersInProgress = NUM_WORKERS;
+    ctx.fillStyle = `rgb(256, 256, 256)`;
+    ctx.fillRect(0, 0, IMAGE_WIDTH, IMAGE_HEIGHT);
+    imageData = ctx.getImageData(0, 0, IMAGE_WIDTH, IMAGE_HEIGHT);
 }
